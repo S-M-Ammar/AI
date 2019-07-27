@@ -8,7 +8,7 @@ import random
 def tournamentSelection(population = Classes.Population()):
 
     #k =  random.randint(3,population.chromosomeList.__len__()-3)
-    k = 2
+    k = 3
 
     candidate_List = []
 

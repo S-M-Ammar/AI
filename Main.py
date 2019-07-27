@@ -18,12 +18,13 @@ while(flag==False):
     print("\n\n\n\n")
 
     population = ProduceNewGeneration.produceGeneration(population)
-    #PrintFunctions.printPopulation(population)
+    PrintFunctions.printPopulation(population)
+    population.populationLimit = population.chromosomeList.__len__()
 
     for x in population.chromosomeList:
 
-        if(x.fitness>=-10):
-            PrintFunctions.printPopulation(population)
+        if(x.fitness>=-4):
+            #PrintFunctions.printPopulation(population)
             chr = x
             flag = True
             break
@@ -33,7 +34,11 @@ while(flag==False):
     if(flag==True):
         break
 
-print(Fitness.CalculateFitness(chr))
+for x in population.chromosomeList:
+    if(x.fitness>=-4):
+        PrintFunctions.printChromosome(x)
+        print(x.fitness)
+        print("\n\n\n")
 
 
 

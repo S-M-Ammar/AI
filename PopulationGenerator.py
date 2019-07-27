@@ -6,9 +6,10 @@ import GenerateTime
 def GeneratePopulation():
 
     population = Classes.Population()
+    population.populationLimit = 100
     Time_List = GenerateTime.takeTime()
 
-    for x in range(58):
+    for x in range(population.populationLimit):
 
         population.chromosomeList.append(ChromosomeGenrator.GenerateChromosome(Time_List))
 

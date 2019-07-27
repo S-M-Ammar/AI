@@ -1,53 +1,103 @@
-
+import numpy as np
 import Classes
 import SelectionProcess
 import random
 import SetTime
-
+import GuessSelection
 
 def crossOver(population = Classes.Population()):
 
-
+    parent1 = Classes.Chromosome()
+    parent2 = Classes.Chromosome()
 
     parent1 = SelectionProcess.tournamentSelection(population)
     parent2 = SelectionProcess.tournamentSelection(population)
 
+    #parent1 = GuessSelection.randomSelectionProcess(population)
+    #parent2 = GuessSelection.randomSelectionProcess(population)
+
     #print("Parent 1 original fitness ",parent1.fitness)
     #print("Parent 2 original fitness ",parent2.fitness)
 
-    randomNumbers = generateRandomNumber(parent1.geneList.__len__())
+    #randomNumbers = generateRandomNumber(parent1.geneList.__len__())
 
-    Children = []
+    child = Classes.Chromosome()
 
-    '''
-    swapping whole gene // bad idea 
-    
-    for x in range(randomNumbers.__len__()):
-
-        rd = randomNumbers[x]
-
-        temp = parent1.geneList[rd]
-        parent1.geneList[rd] = parent2.geneList[rd]
-        parent2.geneList[rd] = temp
-
-    '''
-
-    Children = crossOverAgainstTime(parent1,parent2)
-    Children = crossOverAgainstDay(Children[0], Children[1])
-    Children = crossOverAgainstRoom(Children[0],Children[1])
-
-    Children = MutationAgainstRoom(Children[0],Children[1])
-    Children = MutationAgainstDay(Children[0],Children[1])
-    Children = MutationAgainstTime(Children[0],Children[1])
-
-    return Children
+    child = simpleCrossOver(parent1,parent2)
 
 
+    return child
+
+
+def simpleCrossOver(parent1=Classes.Chromosome() , parent2 = Classes.Chromosome()):
+
+    child = Classes.Chromosome()
+
+    for x in range(parent1.geneList.__len__()):
+
+         z = np.random.random()
+
+         if(z<=0.5):
+             child.geneList.append(parent1.geneList[x])
+
+         elif(z>0.5):
+             child.geneList.append(parent2.geneList[x])
+
+    return child
+
+def simpleMutation(Child = Classes.Chromosome()):
+
+    randomNumbers = generateRandomNumber(0,Child.geneList.__len__()-1,3)
+
+    for x in randomNumbers:
+
+        z = np.random.random()
+
+        if(z<0.4):
+            #Mutation Day
+
+            Child.geneList[x].Day = random.randint(0,4)
+
+        elif(z<0.7):
+            #Mutation Time
+
+            if (Child.geneList[x].Type == 0):
+
+                timeList = SetTime.set_timing_for_class()
+
+                Child.geneList[x].start_time = timeList[0]
+                Child.geneList[x].end_time = timeList[1]
+
+            # lab
+            elif (Child.geneList[x].Type == 1):
+
+                timeList = SetTime.set_timing_for_lab()
+
+                Child.geneList[x].start_time = timeList[0]
+                Child.geneList[x].end_time = timeList[1]
+
+
+
+
+        elif(z<=1):
+            #Mutation Room
+
+            if (Child.geneList[x].Type == 0):
+
+                Child.geneList[x].Room = random.randint(2, 6)
+
+                # lab
+            elif (Child.geneList[x].Type == 1):
+
+                Child.geneList[x].Room = random.randint(0, 1)
+
+
+    pass
 
 
 def crossOverAgainstDay(parent1,parent2):
 
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
 
@@ -61,7 +111,7 @@ def crossOverAgainstDay(parent1,parent2):
 
 
 def crossOverAgainstTime(parent1, parent2):
-    randomNumbers = generateRandomNumber(30)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -79,7 +129,7 @@ def crossOverAgainstTime(parent1, parent2):
 
 
 def crossOverAgainstRoom(parent1, parent2):
-    randomNumbers = generateRandomNumber(6)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -96,15 +146,14 @@ def crossOverAgainstRoom(parent1, parent2):
 
 
 
-def generateRandomNumber(size):
+def generateRandomNumber(startingRange,endingRange,size):
 
     randomNumbers = []
-    size = size/2
-    size = int(size)
+
     for x in range(size):
 
         repeat = True
-        num = random.randint(0,size-1)
+        num = random.randint(startingRange,endingRange)
 
         while(repeat):
             if(num not in randomNumbers):
@@ -112,7 +161,7 @@ def generateRandomNumber(size):
                 repeat = False
 
             else:
-                num = random.randint(0, size - 1)
+                num = random.randint(startingRange,endingRange)
 
 
     return randomNumbers
@@ -123,7 +172,7 @@ def generateRandomNumber(size):
 def MutationAgainstRoom(child1,child2):
 
 
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -140,7 +189,7 @@ def MutationAgainstRoom(child1,child2):
 
 
 
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -163,7 +212,7 @@ def MutationAgainstRoom(child1,child2):
 def MutationAgainstTime(child1, child2):
 
 
-    randomNumbers = generateRandomNumber(30)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -186,7 +235,7 @@ def MutationAgainstTime(child1, child2):
             child1.geneList[rd].end_time = timeList[1]
 
 
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -210,14 +259,14 @@ def MutationAgainstTime(child1, child2):
     return [child1,child2]
 
 def MutationAgainstDay(child1,child2):
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
 
         child1.geneList[rd].Day = random.randint(0,4)
 
-    randomNumbers = generateRandomNumber(10)
+    randomNumbers = generateRandomNumber(0,23,6)
 
     for x in range(randomNumbers.__len__()):
         rd = randomNumbers[x]
@@ -226,3 +275,15 @@ def MutationAgainstDay(child1,child2):
 
     return [child1, child2]
 
+
+def SwappingGene(child1,child2):
+
+    randomNumbers = generateRandomNumber(0,23,6)
+
+    for x in range(randomNumbers.__len__()):
+
+        rd = randomNumbers[x]
+
+        temp = child1.geneList[rd]
+        child1.geneList[rd] = child2.geneList[rd]
+        child2.geneList[rd] = temp

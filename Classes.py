@@ -1,7 +1,10 @@
 class Population:
      chromosomeList = []
+     populationLimit = 0
      def __init__(self):
           self.chromosomeList = []
+
+
 
 
 class Chromosome:
