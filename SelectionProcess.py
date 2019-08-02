@@ -8,13 +8,13 @@ import random
 def tournamentSelection(population = Classes.Population()):
 
     #k =  random.randint(3,population.chromosomeList.__len__()-3)
-    k = 3
+    k = 5
 
     candidate_List = []
 
     for x in range(k):
 
-        z = random.randint(0,population.chromosomeList.__len__()-3)
+        z = random.randint(0,population.chromosomeList.__len__()-1)
         candidate_List.append(population.chromosomeList[z])
 
     winner = candidate_List[0]

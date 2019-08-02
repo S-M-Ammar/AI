@@ -6,7 +6,7 @@ import GenerateTime
 def GeneratePopulation():
 
     population = Classes.Population()
-    population.populationLimit = 100
+    population.populationLimit = 500
     Time_List = GenerateTime.takeTime()
 
     for x in range(population.populationLimit):

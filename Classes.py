@@ -44,4 +44,12 @@ class ChromosomeGene:
 
 
 
+class RouletteChromosome:
+    chr = Chromosome()
+    startRange = 0
+    endingRange = 0
 
+    def __init__(self,chromosome,startRange,endingRange):
+        self.chr = chromosome
+        self.startRange = startRange
+        self.endingRange = endingRange

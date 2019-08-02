@@ -4,6 +4,7 @@ import SelectionProcess
 import random
 import SetTime
 import GuessSelection
+import RouletteSelection
 
 def crossOver(population = Classes.Population()):
 
@@ -12,6 +13,10 @@ def crossOver(population = Classes.Population()):
 
     parent1 = SelectionProcess.tournamentSelection(population)
     parent2 = SelectionProcess.tournamentSelection(population)
+
+    #parent1 = RouletteSelection.RouletteWheelSelection(population)
+    #parent2 = RouletteSelection.RouletteWheelSelection(population)
+
 
     #parent1 = GuessSelection.randomSelectionProcess(population)
     #parent2 = GuessSelection.randomSelectionProcess(population)
@@ -23,7 +28,9 @@ def crossOver(population = Classes.Population()):
 
     child = Classes.Chromosome()
 
-    child = simpleCrossOver(parent1,parent2)
+    child = CrossOverAndMutation(parent1,parent2)
+    #child = simpleCrossOver(parent1,parent2)
+    #child = simpleMutation(child)
 
 
     return child
@@ -45,9 +52,51 @@ def simpleCrossOver(parent1=Classes.Chromosome() , parent2 = Classes.Chromosome(
 
     return child
 
+def CrossOverAndMutation(parent1=Classes.Chromosome() , parent2 = Classes.Chromosome()):
+
+    child = Classes.Chromosome()
+
+    for x in range(parent1.geneList.__len__()):
+
+        z = random.random()
+
+        if (z <= 0.5):
+            child.geneList.append(parent1.geneList[x])
+
+        elif (z>0.5 and z<=0.9):
+            child.geneList.append(parent2.geneList[x])
+
+        else:
+
+            child.geneList.append(parent1.geneList[x])
+            k =np.random.random()
+
+            if(k<=0.3):
+                child = mutationAgainstDay(child,x)
+
+
+            elif(k<=0.6):
+                child = mutationAgainstTime(child,x)
+
+
+            elif(k<=1):
+                child = mutationAgainstRoom(child,x)
+
+
+
+
+    return child
+
+
 def simpleMutation(Child = Classes.Chromosome()):
 
-    randomNumbers = generateRandomNumber(0,Child.geneList.__len__()-1,3)
+    randomNumbers = []
+    #length = int(Child.geneList.__len__()/2)
+    length = 3
+    for x in range(length):
+
+        randomNumbers.append(random.randint(0,Child.geneList.__len__()-1))
+
 
     for x in randomNumbers:
 
@@ -58,7 +107,7 @@ def simpleMutation(Child = Classes.Chromosome()):
 
             Child.geneList[x].Day = random.randint(0,4)
 
-        elif(z<0.7):
+        elif(z<0.5):
             #Mutation Time
 
             if (Child.geneList[x].Type == 0):
@@ -91,199 +140,41 @@ def simpleMutation(Child = Classes.Chromosome()):
 
                 Child.geneList[x].Room = random.randint(0, 1)
 
+        return Child
 
-    pass
 
+def mutationAgainstDay(child = Classes.Chromosome(),index=0):
+    child.geneList[index].Day = random.randint(0, 4)
+    return child
 
-def crossOverAgainstDay(parent1,parent2):
+def mutationAgainstTime(child = Classes.Chromosome(),index=0):
+    if (child.geneList[index].Type == 0):
 
-    randomNumbers = generateRandomNumber(0,23,6)
+        timeList = SetTime.set_timing_for_class()
 
-    for x in range(randomNumbers.__len__()):
+        child.geneList[index].start_time = timeList[0]
+        child.geneList[index].end_time = timeList[1]
 
-        rd = randomNumbers[x]
 
-        temp_day = parent1.geneList[rd].Day
-        parent1.geneList[rd].Day = parent2.geneList[rd].Day
-        parent2.geneList[rd].Day = temp_day
+    elif (child.geneList[index].Type == 1):
 
-    return [parent1, parent2]
+        timeList = SetTime.set_timing_for_lab()
 
+        child.geneList[index].start_time = timeList[0]
+        child.geneList[index].end_time = timeList[1]
 
-def crossOverAgainstTime(parent1, parent2):
-    randomNumbers = generateRandomNumber(0,23,6)
+    return child
 
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
+def mutationAgainstRoom(child = Classes.Chromosome(),index=0):
+    # Room
 
-        start_time = parent1.geneList[rd].start_time
-        end_time = parent1.geneList[rd].end_time
+    if (child.geneList[index].Type == 0):
 
-        parent1.geneList[rd].start_time = parent2.geneList[rd].start_time
-        parent1.geneList[rd].end_time = parent2.geneList[rd].end_time
-
-        parent2.geneList[rd].start_time = start_time
-        parent2.geneList[rd].end_time = end_time
-
-    return [parent1, parent2]
-
-
-def crossOverAgainstRoom(parent1, parent2):
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        Room = parent1.geneList[rd].Room
-
-
-        parent1.geneList[rd].Room = parent2.geneList[rd].Room
-
-
-        parent2.geneList[rd].Room = Room
-
-    return[parent1,parent2]
-
-
-
-def generateRandomNumber(startingRange,endingRange,size):
-
-    randomNumbers = []
-
-    for x in range(size):
-
-        repeat = True
-        num = random.randint(startingRange,endingRange)
-
-        while(repeat):
-            if(num not in randomNumbers):
-                randomNumbers.append(num)
-                repeat = False
-
-            else:
-                num = random.randint(startingRange,endingRange)
-
-
-    return randomNumbers
-
-
-
-
-def MutationAgainstRoom(child1,child2):
-
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        #class
-        if(child1.geneList[rd].Type==0):
-
-            child1.geneList[rd].Room = random.randint(2, 6)
-
-        #lab
-        elif(child1.geneList[rd].Type==1):
-
-            child1.geneList[rd].Room = random.randint(0, 1)
-
-
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        #class
-        if(child2.geneList[rd].Type==0):
-
-            child2.geneList[rd].Room = random.randint(2, 6)
-
-        #lab
-        elif(child2.geneList[rd].Type==1):
-
-            child2.geneList[rd].Room = random.randint(0, 1)
-
-
-    return [child1,child2]
-
-
-
-def MutationAgainstTime(child1, child2):
-
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-
-        # class
-        if (child1.geneList[rd].Type == 0):
-
-            timeList = SetTime.set_timing_for_class()
-
-            child1.geneList[rd].start_time = timeList[0]
-            child1.geneList[rd].end_time = timeList[1]
+        child.geneList[index].Room = random.randint(2, 6)
 
         # lab
-        elif (child1.geneList[rd].Type == 1):
+    elif (child.geneList[index].Type == 1):
 
-            timeList = SetTime.set_timing_for_lab()
+        child.geneList[index].Room = random.randint(0, 1)
 
-            child1.geneList[rd].start_time = timeList[0]
-            child1.geneList[rd].end_time = timeList[1]
-
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        # class
-        if (child2.geneList[rd].Type == 0):
-
-            timeList = SetTime.set_timing_for_class()
-
-            child2.geneList[rd].start_time = timeList[0]
-            child2.geneList[rd].end_time = timeList[1]
-
-        # lab
-        elif (child2.geneList[rd].Type == 1):
-
-            timeList = SetTime.set_timing_for_lab()
-
-            child2.geneList[rd].start_time = timeList[0]
-            child2.geneList[rd].end_time = timeList[1]
-
-    return [child1,child2]
-
-def MutationAgainstDay(child1,child2):
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        child1.geneList[rd].Day = random.randint(0,4)
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-        rd = randomNumbers[x]
-
-        child1.geneList[rd].Day = random.randint(0, 4)
-
-    return [child1, child2]
-
-
-def SwappingGene(child1,child2):
-
-    randomNumbers = generateRandomNumber(0,23,6)
-
-    for x in range(randomNumbers.__len__()):
-
-        rd = randomNumbers[x]
-
-        temp = child1.geneList[rd]
-        child1.geneList[rd] = child2.geneList[rd]
-        child2.geneList[rd] = temp
+    return child

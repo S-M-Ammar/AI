@@ -1,5 +1,5 @@
 import Classes
-
+import datetime
 
 
 def CalculateFitness(chrsm = Classes.Chromosome()):
@@ -117,7 +117,7 @@ def set_elements_per_day(general_Matrix = []):
                Monday_matrix[1].append(general_Matrix[3][x]) # end time
                Monday_matrix[2].append(general_Matrix[1][x]) # room
                Monday_matrix[3].append(1)                    # room occupation
-               Monday_matrix[4].append([general_Matrix[4][x],1]) # teacher code
+               Monday_matrix[4].append([general_Matrix[4][x],1]) # teacher clash
                Monday_matrix[5].append(general_Matrix[5][x]) # batch number
                Monday_matrix[6].append([general_Matrix[6][x],1]) # section code
 
@@ -135,7 +135,7 @@ def set_elements_per_day(general_Matrix = []):
                 Tuesday_matrix[1].append(general_Matrix[3][x])  # end time
                 Tuesday_matrix[2].append(general_Matrix[1][x])  # room
                 Tuesday_matrix[3].append(1)  # room occupation
-                Tuesday_matrix[4].append([general_Matrix[4][x], 1])  # teacher code
+                Tuesday_matrix[4].append([general_Matrix[4][x], 1])  # teacher clash
                 Tuesday_matrix[5].append(general_Matrix[5][x])  # batch number
                 Tuesday_matrix[6].append([general_Matrix[6][x], 1])  # section code
 
@@ -150,7 +150,7 @@ def set_elements_per_day(general_Matrix = []):
                 Wednesday_matrix[1].append(general_Matrix[3][x])  # end time
                 Wednesday_matrix[2].append(general_Matrix[1][x])  # room
                 Wednesday_matrix[3].append(1)  # room occupation
-                Wednesday_matrix[4].append([general_Matrix[4][x], 1])  # teacher code
+                Wednesday_matrix[4].append([general_Matrix[4][x], 1])  # teacher clash
                 Wednesday_matrix[5].append(general_Matrix[5][x])  # batch number
                 Wednesday_matrix[6].append([general_Matrix[6][x], 1])  # section code
 
@@ -166,7 +166,7 @@ def set_elements_per_day(general_Matrix = []):
                 Thursday_matrix[1].append(general_Matrix[3][x])  # end time
                 Thursday_matrix[2].append(general_Matrix[1][x])  # room
                 Thursday_matrix[3].append(1)  # room occupation
-                Thursday_matrix[4].append([general_Matrix[4][x], 1])  # teacher code
+                Thursday_matrix[4].append([general_Matrix[4][x], 1])  # teacher clash
                 Thursday_matrix[5].append(general_Matrix[5][x])  # batch number
                 Thursday_matrix[6].append([general_Matrix[6][x], 1])  # section code
 
@@ -181,7 +181,7 @@ def set_elements_per_day(general_Matrix = []):
                 Friday_matrix[1].append(general_Matrix[3][x])  # end time
                 Friday_matrix[2].append(general_Matrix[1][x])  # room
                 Friday_matrix[3].append(1)  # room occupation
-                Friday_matrix[4].append([general_Matrix[4][x], 1])  # teacher code
+                Friday_matrix[4].append([general_Matrix[4][x], 1])  # teacher clash
                 Friday_matrix[5].append(general_Matrix[5][x])  # batch number
                 Friday_matrix[6].append([general_Matrix[6][x], 1])  # section code
 
@@ -216,45 +216,42 @@ def entries_check(Day_matrix = [] , generalMatrix = []  , index = 0):
         time_is_equal = False
         lie_in_between = False
 
-        start_time = Day_matrix[0][x]
-        end_time = Day_matrix[1][x]
+        st = Day_matrix[0][x]
+        et = Day_matrix[1][x]
 
-        generalMatrix_startTime = generalMatrix[2][index]
-        generalMatrix_endTime = generalMatrix[3][index]
+        start_time = datetime.time(st[0],st[1],0)
+        end_time = datetime.time(et[0],et[1],0)
 
-        if(start_time[0]==generalMatrix_startTime[0] and start_time[1]==generalMatrix_startTime[1] and end_time[0]==generalMatrix_endTime[0] and end_time[1]==generalMatrix_endTime[1]):
 
-            time_is_equal = True
+        generalMatrix_st = generalMatrix[2][index]
+        generalMatrix_et = generalMatrix[3][index]
 
-            if(Day_matrix[2][x] == generalMatrix[1][index]):
+        generalMatrix_startTime = datetime.time(generalMatrix_st[0],generalMatrix_st[1],0)
+        generalMatrix_endTime = datetime.time(generalMatrix_et[0],generalMatrix_et[1],0)
 
+
+        if(start_time==generalMatrix_st and end_time==generalMatrix_endTime):
+
+            if (Day_matrix[2][x] == generalMatrix[1][index]):
                 room_clash = Day_matrix[3][x]
                 room_clash = room_clash + 1
                 Day_matrix[3][x] = room_clash
                 addEntry = False
 
-            if(Day_matrix[4][x][0] == generalMatrix[4][index]):
-
+            if (Day_matrix[4][x][0] == generalMatrix[4][index]):
                 Teacher_clash = Day_matrix[4][x][1]
                 Teacher_clash = Teacher_clash + 1
                 Day_matrix[4][x][1] = Teacher_clash
                 addEntry = False
 
-            if(Day_matrix[5][x] == generalMatrix[5][index]):
 
+            if (Day_matrix[5][x] == generalMatrix[5][index]):
                 section_clash = Day_matrix[6][x][1]
                 section_clash = section_clash + 1
                 Day_matrix[6][x][1] = section_clash
                 addEntry = False
 
-
-
-
-        #check if new entry start time or end time lies in between any existing entry
-
-        if(generalMatrix_startTime[0]>=start_time[0] and generalMatrix_startTime[1] >= start_time[1] and generalMatrix_startTime[0] <=end_time[0] and generalMatrix_startTime[1]<=end_time[1] and time_is_equal==False ):
-
-            lie_in_between = True
+        elif(generalMatrix_startTime>=start_time and generalMatrix_startTime<=end_time):
 
             if (Day_matrix[2][x] == generalMatrix[1][index]):
                 room_clash = Day_matrix[3][x]
@@ -274,9 +271,7 @@ def entries_check(Day_matrix = [] , generalMatrix = []  , index = 0):
                 Day_matrix[6][x][1] = section_clash
                 addEntry = False
 
-        elif(generalMatrix_endTime[0]>=start_time[0] and generalMatrix_endTime[1]>=start_time[1] and generalMatrix_endTime[0]<=end_time[0] and generalMatrix_endTime[1]<=end_time[1]and time_is_equal==False):
-
-            lie_in_between = True
+        elif(generalMatrix_endTime>=start_time and generalMatrix_endTime<=end_time):
 
             if (Day_matrix[2][x] == generalMatrix[1][index]):
                 room_clash = Day_matrix[3][x]
@@ -296,43 +291,53 @@ def entries_check(Day_matrix = [] , generalMatrix = []  , index = 0):
                 Day_matrix[6][x][1] = section_clash
                 addEntry = False
 
-        #check whether any existing entry lies in between interval of new entry
+        elif(start_time>=generalMatrix_startTime and start_time<=generalMatrix_endTime):
 
+            if (Day_matrix[2][x] == generalMatrix[1][index]):
+                room_clash = Day_matrix[3][x]
+                room_clash = room_clash + 1
+                Day_matrix[3][x] = room_clash
+                addEntry = False
 
-        if(lie_in_between==False and time_is_equal==False):
+            if (Day_matrix[4][x][0] == generalMatrix[4][index]):
+                Teacher_clash = Day_matrix[4][x][1]
+                Teacher_clash = Teacher_clash + 1
+                Day_matrix[4][x][1] = Teacher_clash
+                addEntry = False
 
-            if(start_time[0]>=generalMatrix_startTime[0] and start_time[1]>=generalMatrix_startTime[1] and end_time[0]<=generalMatrix_endTime[0] and end_time[1]<=generalMatrix_endTime[1]):
+            if (Day_matrix[5][x] == generalMatrix[5][index]):
+                section_clash = Day_matrix[6][x][1]
+                section_clash = section_clash + 1
+                Day_matrix[6][x][1] = section_clash
+                addEntry = False
 
-                if (Day_matrix[2][x] == generalMatrix[1][index]):
-                    room_clash = Day_matrix[3][x]
-                    room_clash = room_clash + 1
-                    Day_matrix[3][x] = room_clash
-                    addEntry = False
+        elif(end_time>=generalMatrix_startTime and end_time<=generalMatrix_endTime):
 
-                if (Day_matrix[4][x][0] == generalMatrix[4][index]):
-                    Teacher_clash = Day_matrix[4][x][1]
-                    Teacher_clash = Teacher_clash + 1
-                    Day_matrix[4][x][1] = Teacher_clash
-                    addEntry = False
+            if (Day_matrix[2][x] == generalMatrix[1][index]):
+                room_clash = Day_matrix[3][x]
+                room_clash = room_clash + 1
+                Day_matrix[3][x] = room_clash
+                addEntry = False
 
-                if (Day_matrix[5][x] == generalMatrix[5][index]):
-                    section_clash = Day_matrix[6][x][1]
-                    section_clash = section_clash + 1
-                    Day_matrix[6][x][1] = section_clash
-                    addEntry = False
+            if (Day_matrix[4][x][0] == generalMatrix[4][index]):
+                Teacher_clash = Day_matrix[4][x][1]
+                Teacher_clash = Teacher_clash + 1
+                Day_matrix[4][x][1] = Teacher_clash
+                addEntry = False
 
-
-
-
-
+            if (Day_matrix[5][x] == generalMatrix[5][index]):
+                section_clash = Day_matrix[6][x][1]
+                section_clash = section_clash + 1
+                Day_matrix[6][x][1] = section_clash
+                addEntry = False
 
 
     if(addEntry):
         Day_matrix[0].append(generalMatrix[2][index])  # start time
         Day_matrix[1].append(generalMatrix[3][index])  # end time
         Day_matrix[2].append(generalMatrix[1][index])  # room
-        Day_matrix[3].append(1)
-        Day_matrix[4].append([generalMatrix[4][index], 1])  # teacher code
+        Day_matrix[3].append(1)                        # room occupation
+        Day_matrix[4].append([generalMatrix[4][index], 1])  # teacher clash
         Day_matrix[5].append(generalMatrix[5][index]) # batch number
         Day_matrix[6].append([generalMatrix[6][index],1]) # section code
 

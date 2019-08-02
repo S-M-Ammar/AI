@@ -1,14 +1,11 @@
-import PrintFunctions
-import PopulationGenerator
-import SelectionProcess
-import PrintFunctions
-import CrossOverAndMutation
 import Fitness
+import PopulationGenerator
+import PrintFunctions
 import ProduceNewGeneration
 import Classes
 
 population = PopulationGenerator.GeneratePopulation()
-#PrintFunctions.printPopulation(population)
+
 
 chr = Classes.Chromosome
 flag = False
@@ -23,23 +20,32 @@ while(flag==False):
 
     for x in population.chromosomeList:
 
-        if(x.fitness>=-4):
-            #PrintFunctions.printPopulation(population)
+        if(x.fitness==0):
+
             chr = x
+            PrintFunctions.printChromosome(chr)
             flag = True
             break
 
     i=i+1
 
     if(flag==True):
-        break
 
+       break
+
+
+
+fit = Fitness.CalculateFitness(chr)
+'''
 for x in population.chromosomeList:
-    if(x.fitness>=-4):
+    if(x.fitness==0):
         PrintFunctions.printChromosome(x)
+        fit = Fitness.CalculateFitness(chr)
+
         print(x.fitness)
         print("\n\n\n")
 
+'''
 
 
 
