@@ -28,12 +28,72 @@ def crossOver(population = Classes.Population()):
 
     child = Classes.Chromosome()
 
-    child = CrossOverAndMutation(parent1,parent2)
+
+    #child = CrossOverAndMutation(parent1,parent2)
+    #child = mate(parent1,parent2)
+    child = simpleCrossOver(parent1,parent2)
+    #print(child.geneList.__len__());
     #child = simpleCrossOver(parent1,parent2)
     #child = simpleMutation(child)
 
 
     return child
+
+def mate(par1, par2):
+
+        child = Classes.Chromosome()
+
+        scale = int((par1.geneList.__len__() )/ 4)
+
+        for x in range(0, scale):
+            child.geneList.append(par1.geneList[x])
+
+        for x in range(scale, scale+scale):
+            child.geneList.append(par2.geneList[x])
+
+        for x in range(scale+scale , scale+scale+scale):
+            child.geneList.append(par1.geneList[x])
+
+        for x in range(scale+scale+scale, par1.geneList.__len__()):
+            child.geneList.append(par2.geneList[x])
+
+
+
+        mutationChance = random.random()
+
+
+        for x in range(1):
+
+                type_same = 0
+
+                while(type_same!=1):
+                    firstHalf = int(child.geneList.__len__() / 2)
+                    secondHalf = firstHalf+1
+                    index1 = random.randint(0,firstHalf)
+                    index2 = random.randint(secondHalf,child.geneList.__len__()-1)
+
+                    if(child.geneList[index1].Type == child.geneList[index2].Type):
+                        type_same = 1
+                        Day = child.geneList[index2].Day
+                        Room = child.geneList[index2].Room
+                        start_time = child.geneList[index2].start_time
+                        end_time = child.geneList[index2].end_time
+
+
+                        child.geneList[index2].Day = child.geneList[index1].Day
+                        child.geneList[index2].Room = child.geneList[index1].Room
+                        child.geneList[index2].start_time = child.geneList[index1].start_time
+                        child.geneList[index2].end_time = child.geneList[index1].end_time
+
+                        child.geneList[index1].Day = Day
+                        child.geneList[index1].Room = Room
+                        child.geneList[index1].start_time = start_time
+                        child.geneList[index1].end_time = end_time
+
+
+
+
+        return child
 
 
 def simpleCrossOver(parent1=Classes.Chromosome() , parent2 = Classes.Chromosome()):
@@ -63,7 +123,7 @@ def CrossOverAndMutation(parent1=Classes.Chromosome() , parent2 = Classes.Chromo
         if (z <= 0.5):
             child.geneList.append(parent1.geneList[x])
 
-        elif (z>0.5 and z<=0.9):
+        elif (z<=0.9):
             child.geneList.append(parent2.geneList[x])
 
         else:
@@ -71,16 +131,20 @@ def CrossOverAndMutation(parent1=Classes.Chromosome() , parent2 = Classes.Chromo
             child.geneList.append(parent1.geneList[x])
             k =np.random.random()
 
-            if(k<=0.3):
+
+            if(k<=0.32):
                 child = mutationAgainstDay(child,x)
+                pass
 
 
-            elif(k<=0.6):
+            elif(k<=0.62):
                 child = mutationAgainstTime(child,x)
+                pass
 
 
             elif(k<=1):
                 child = mutationAgainstRoom(child,x)
+                pass
 
 
 

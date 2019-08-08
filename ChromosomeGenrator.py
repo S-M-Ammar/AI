@@ -25,7 +25,7 @@ def GenerateChromosome(Time_List):
             chromosome1.geneList.append(
                 Classes.ChromosomeGene(CodeList.course_database[x][0], CodeList.course_database[x][1],
                                        CodeList.course_database[x][3], CodeList.course_database[x][2],
-                                       CodeList.course_database[x][4], random.randint(2, 6), timeList[0], timeList[1],
+                                       CodeList.course_database[x][4], random.randint(2, 7), timeList[0], timeList[1],
                                        random.randint(0, 4)))
 
 

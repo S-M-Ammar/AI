@@ -28,6 +28,7 @@ class ChromosomeGene:
      start_time = []
      end_time = []
      Day = 0
+     CausingError = 0
 
      def __init__(self,CourseID,Teacher,Section,Type,Batch,Room,start_time,end_time,Day):
           self.Batch = Batch
